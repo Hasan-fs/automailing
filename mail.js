@@ -9,7 +9,7 @@ async function sendMail() {
     port: 465,
     secure: true,
     auth: {
-      user: 'nevprintemps@gmail.com',
+      user: '@gmail.com',
       pass: '..',
     },
     // Daha güvenli bağlantılar için TLS yapılandırması
@@ -18,8 +18,8 @@ async function sendMail() {
 
   // E-posta içeriği
   let mailOptions = {
-    from: 'nevprintemps@gmail.com',
-    to: 'nevprintemps@gmail.com',
+    from: '@gmail.com',
+    to: '@gmail.com',
     subject: 'Merhaba',
     text: 'Bu, Node.js ile gönderilen otomatik bir e-postadır.',
     // HTML içeriği eklemek
