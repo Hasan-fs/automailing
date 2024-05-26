@@ -11,7 +11,7 @@ async function sendMail({ email, subject, name }) {
     secure: true,
     auth: {
       user: 'sales1@sevyat.com',
-      pass: 'Sevyat2024.',
+      pass: 'llll',
     },
     // Daha güvenli bağlantılar için TLS yapılandırması
     //tls: {rejectUnauthorized: false}
