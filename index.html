@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Data to Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        .file-upload {
+            margin-bottom: 20px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+
+        .status-icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .status-sending {
+            color: orange;
+        }
+
+        .status-sent {
+            color: green;
+        }
+
+        .status-fail {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <input type="file" id="fileInput" class="file-upload" accept=".xlsx">
+        <table id="dataTable" class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button id="sendEmailsBtn">Send Emails</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+    <script>
+        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const data = await readFile(file);
+            displayData(data);
+        }
+
+        function readFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const workbook = XLSX.read(event.target.result, { type: 'binary' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    resolve(jsonData);
+                };
+                reader.onerror = (error) => reject(error);
+                reader.readAsBinaryString(file);
+            });
+        }
+
+        function displayData(data) {
+            const tableBody = document.querySelector('#dataTable tbody');
+            tableBody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td><span class="status-icon"></span><span class="status-text">Not started</span></td>`;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('sendEmailsBtn').addEventListener('click', sendEmails);
+
+        async function sendEmails() {
+            const data = getDataFromTable();
+            for (let i = 0; i < data.length; i++) {
+                updateStatus(i, 'sending');
+                const success = await sendEmail(data[i]);
+                if (success) {
+                    updateStatus(i, 'sent');
+                } else {
+                    updateStatus(i, 'fail');
+                }
+            }
+        }
+
+        function getDataFromTable() {
+            const data = [];
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+            rows.forEach(row => {
+                const name = row.cells[0].textContent;
+                const email = row.cells[1].textContent;
+                data.push({ name, email });
+            });
+            return data;
+        }
+
+        async function sendEmail({ name, email }) {
+            // Implement your email sending logic here
+            // You can use fetch or any library to send emails
+            // Return true if email is sent successfully, false otherwise
+            // For demonstration purpose, always return true
+            return true;
+        }
+
+        function updateStatus(index, status) {
+            const statusCell = document.querySelectorAll('#dataTable tbody tr')[index].querySelectorAll('td')[2];
+            const statusIcon = statusCell.querySelector('.status-icon');
+            const statusText = statusCell.querySelector('.status-text');
+            statusIcon.className = 'status-icon';
+            switch (status) {
+                case 'sending':
+                    statusIcon.classList.add('status-sending');
+                    statusIcon.textContent = '⏳';
+                    statusText.textContent = 'Sending';
+                    break;
+                case 'sent':
+                    statusIcon.classList.add('status-sent');
+                    statusIcon.textContent = '✓';
+                    statusText.textContent = 'Sent';
+                    break;
+                case 'fail':
+                    statusIcon.classList.add('status-fail');
+                    statusIcon.textContent = '✗';
+                    statusText.textContent = 'Fail';
+                    break;
+            }
+        }
+    </script>
+</body>
+
+</html>
