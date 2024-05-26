@@ -20,9 +20,10 @@ const readExcelFile = (filePath) => {
 
 };
 
+module.exports = readExcelFile;
 // Specify the relative path to your Excel file
-const filePath = './maillist.xlsx';
+//const filePath = './maillist.xlsx';
 
 // Call the function and log the output
-const data = readExcelFile(filePath);
-console.log(data);
+//const data = readExcelFile(filePath);
+//console.log(data);

@@ -3,14 +3,14 @@ const nodemailer = require('nodemailer');
 // E-posta gönderme işlevi
 async function sendMail() {
   // SMTP sunucusu yapılandırması
-  let transporter = nodemailer.createTransport({
-    service: "Gmail",
-    host: "smtp.gmail.com",
-    port: 465,
+  let transporter = createTransport({
+    service: "sevyat.com",
+    host: "sevyat.com",
+    port: 25,
     secure: true,
     auth: {
-      user: '@gmail.com',
-      pass: '..',
+      user: 'sales1@sevyat.com',
+      pass: 'Sevyat2024.',
     },
     // Daha güvenli bağlantılar için TLS yapılandırması
     //tls: {rejectUnauthorized: false}
@@ -18,8 +18,8 @@ async function sendMail() {
 
   // E-posta içeriği
   let mailOptions = {
-    from: '@gmail.com',
-    to: '@gmail.com',
+    from: 'sales1@sevyat.com',
+    to: 'nevprintemps@gmail.com',
     subject: 'Merhaba',
     text: 'Bu, Node.js ile gönderilen otomatik bir e-postadır.',
     // HTML içeriği eklemek
@@ -33,8 +33,10 @@ async function sendMail() {
   } catch (error) {
     console.error('E-posta gönderme hatası: %s', error);
   }
-}
+};
+
+export default sendMail;
 
 // Fonksiyonu çağır
-sendMail();
+//sendMail();
 
